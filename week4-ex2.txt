@@ -1,0 +1,102 @@
+package com.example.week8
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class CounterViewModel : ViewModel() {
+    private val _count = MutableStateFlow(0)
+    val count: StateFlow<Int> = _count.asStateFlow()
+
+    fun increase() {
+        _count.value++
+    }
+
+    fun reset() {
+        _count.value = 0
+    }
+}
+
+class TimerViewModel : ViewModel() {
+    private val _secondsElapsed = MutableStateFlow(0)
+    val secondsElapsed: StateFlow<Int> = _secondsElapsed.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            while (true) {
+                delay(1000L)
+                _secondsElapsed.value++
+            }
+        }
+    }
+}
+
+
+@Composable
+fun CounterDisplay(viewModel: CounterViewModel) {
+    val count by viewModel.count.collectAsState()
+    Text(
+        text = "Count: $count",
+        fontSize = 30.sp
+    )
+}
+
+
+@Composable
+fun CounterControls(viewModel: CounterViewModel) {
+    Row(
+        modifier = Modifier.padding(8.dp),
+        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+    ) {
+        Button(onClick = { viewModel.increase() }) {
+            Text("Increase", fontSize = 20.sp)
+        }
+        Button(onClick = { viewModel.reset() }) {
+            Text("Reset", fontSize = 20.sp)
+        }
+    }
+}
+
+
+@Composable
+fun TimerDisplay(viewModel: TimerViewModel) {
+    val seconds by viewModel.secondsElapsed.collectAsState()
+    Text(
+        text = "Seconds Elapsed: $seconds",
+        fontSize = 30.sp
+    )
+}
+
+
+@Composable
+fun CounterScreen(
+    counterViewModel: CounterViewModel = viewModel(),
+    timerViewModel: TimerViewModel = viewModel()
+) {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(16.dp)
+    ) {
+        CounterDisplay(viewModel = counterViewModel)
+        CounterControls(viewModel = counterViewModel)
+        TimerDisplay(viewModel = timerViewModel)
+    }
+}
