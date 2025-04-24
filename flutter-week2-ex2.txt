@@ -1,0 +1,46 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Snackbar Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 0, 255, 30)),
+      ),
+      home: const SnackbarDemo(),
+    );
+  }
+}
+
+class SnackbarDemo extends StatelessWidget {
+  const SnackbarDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Snackbar by Alicja Kosak'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Hello There!'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          },
+          child: const Text('Show Snackbar message'),
+        ),
+      ),
+    );
+  }
+}
