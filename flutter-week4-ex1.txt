@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+import 'dart:convert';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'List from JSON',
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  final String jsonString = '''
+  [
+    {"title": "Item 1", "subtitle": "This is the first item"},
+    {"title": "Item 2", "subtitle": "This is the second item"},
+    {"title": "Item 3", "subtitle": "This is the third item"}
+  ]
+  ''';
+
+  @override
+  Widget build(BuildContext context) {
+    final List<dynamic> jsonData = json.decode(jsonString);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('List from JSON'),
+      ),
+      body: ListView.builder(
+        itemCount: jsonData.length,
+        itemBuilder: (context, index) {
+          final item = jsonData[index];
+          return ListTile(
+            title: Text(item['title']),
+            subtitle: Text(item['subtitle']),
+            leading: Icon(Icons.label),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Tapped on ${item['title']}')),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
